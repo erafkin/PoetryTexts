@@ -7,6 +7,7 @@ import cors from 'cors';
 import router from './router';
 
 require('dotenv').config(); // load environment variables
+const app = express();
 
 
 // initialize
@@ -16,7 +17,6 @@ app.use(cors());
 
 // enable/disable http request logging
 app.use(morgan('dev'));
-
 // enable json message body for posting data to API
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -45,7 +45,28 @@ setInterval(function() {
   .then(message => console.log(message.sid));
   }, 86400000); // every 5 minutes (300000)
 
+app.get('/',(req, res) => {
+    const authors  = http.get('http://poetrydb.org/author');
+    console.log(authors);
+    const author = authors["authors"][Math.floor(Math.random() * Math.floor(authors["author"].length))];
+    console.log(author);
 
+    const titles= http.get('http://poetrydb.org/author/' + author + '/title');
+    console.log(titles);
+
+    const title = [Math.floor(Math.random() * Math.floor(titles.length))]["title"];
+    console.log(title);
+
+    const poem = http.get('http://poetrydb.org/title/' + title)["lines"];
+    console.log(poem);
+
+
+    client.messages
+    .create({
+        body: poem,
+        from: '+18729850386',
+        to: '+3126369908'
+     })  });
 
 // START THE SERVER
 // =============================================================================
