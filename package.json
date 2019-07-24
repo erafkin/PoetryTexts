@@ -1,0 +1,23 @@
+{
+  "name": "PoetryTexts",
+  "version": "1.0.0",
+  "description": "sends poems to a certain number once a day",
+  "main": "server.js",
+  "repository": "git@github.com:erafkin/PoetryTexts.git",
+  "author": "Emma Rafkin <emmarafkin@gmail.com>",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^10.0.2",
+    "babel-preset-env": "^1.7.0",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.0.0",
+    "ejs": "^2.6.2",
+    "express": "^4.17.1",
+    "http": "^0.0.0",
+    "nodemon": "^1.19.1",
+    "twilio": "^3.33.2"
+  }
+}
