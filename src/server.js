@@ -24,8 +24,8 @@ app.use(bodyParser.json());
 // Download the helper library from https://www.twilio.com/docs/node/install
 // Your Account Sid and Auth Token from twilio.com/console
 // DANGER! This is insecure. See http://twil.io/secure
-
-setInterval(function() {
+var schedule = require('node-schedule');
+var j = schedule.scheduleJob('0 0 12 * * *', function(){
 
     const accountSid = 'AC6552ad565247c77cb8fc1ce3d7d666a1';
     const authToken = '6ed462975d302c6fa64a261a84ebc049';
@@ -92,7 +92,7 @@ setInterval(function() {
                 }).on("error", (err) => {
                     console.log("Error: " + err.message);
                 });
-  }, 86400000); // every 5 minutes (300000)
+  });
 
 app.get('/',(req, res) => {
             let poem = [];
