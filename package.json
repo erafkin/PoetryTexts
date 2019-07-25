@@ -1,5 +1,5 @@
 {
-  "name": "PoetryTexts",
+  "name": "poetry-texts",
   "version": "1.0.0",
   "description": "sends poems to a certain number once a day",
   "main": "server.js",
