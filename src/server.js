@@ -27,12 +27,12 @@ app.use(bodyParser.json());
 var schedule = require('node-schedule');
 var rule = new schedule.RecurrenceRule();
 rule.minute = 30;
-rule.hour = 12;
+rule.hour = 13;
 
 var j = schedule.scheduleJob(rule, function(){
 
-    const accountSid = 'AC6552ad565247c77cb8fc1ce3d7d666a1';
-    const authToken = '6ed462975d302c6fa64a261a84ebc049';
+    const accountSid = process.env.SID;
+    const authToken = process.env.AUTH
     const client = require('twilio')(accountSid, authToken);
     
         let poem = [];
