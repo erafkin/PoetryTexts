@@ -25,7 +25,7 @@ app.use(bodyParser.json());
 // Your Account Sid and Auth Token from twilio.com/console
 // DANGER! This is insecure. See http://twil.io/secure
 var schedule = require('node-schedule');
-var j = schedule.scheduleJob('0 0 12 * * *', function(){
+var j = schedule.scheduleJob('30 12 * * *', function(){
 
     const accountSid = 'AC6552ad565247c77cb8fc1ce3d7d666a1';
     const authToken = '6ed462975d302c6fa64a261a84ebc049';
