@@ -31,7 +31,6 @@ setInterval(function() {
     const authToken = '6ed462975d302c6fa64a261a84ebc049';
     const client = require('twilio')(accountSid, authToken);
     
-        let poem_short_enough = false;
         let poem = [];
             http.get('http://poetrydb.org/author', (resp) => {
                 let data = '';
@@ -96,8 +95,61 @@ setInterval(function() {
   }, 86400000); // every 5 minutes (300000)
 
 app.get('/',(req, res) => {
+            let poem = [];
+            http.get('http://poetrydb.org/author', (resp) => {
+                let data = '';
+        
+                // A chunk of data has been recieved.
+                resp.on('data', (chunk) => {
+                    data += chunk;
+                });
+        
+                // The whole response has been received. Print out the result.
+                resp.on('end', () => {
+                    let authors = JSON.parse(data)["authors"];
+                    const author = authors[Math.floor(Math.random() * Math.floor(authors.length))];
+                    console.log("author: "+ author);
+                    http.get('http://poetrydb.org/author/' + author + '/title', (resp) => {
+                        let data2 = '';
+        
+                        // A chunk of data has been recieved.
+                        resp.on('data', (chunk) => {
+                            data2 += chunk;
+                        });
+                        console.log(data2);
+                        resp.on('end', () => {
+                            let titles = JSON.parse(data2);
+                            const title = titles[Math.floor(Math.random() * Math.floor(titles.length))]["title"];
+                            console.log("title: "+title);
+                            console.log('http://poetrydb.org/title/' + title);
+                            http.get('http://poetrydb.org/title/' + title, (resp) => {
+        
+                                let data3 = '';
+        
+                                // A chunk of data has been recieved.
+                                resp.on('data', (chunk) => {
+                                    data3 += chunk;
+                                });
+                                console.log(data3);
+                                resp.on('end', () => {
+                                    poem = JSON.parse(data3)[0]["lines"];
+                                    res.send("Author: "+ author+ "\n"+"Title: " + title + "\n" + poem);
+                                });
+    
+                            });
+                        });
+                    }).on("error", (err) => {
+                        console.log("Error: " + err.message);
+                    });
+                }).on("error", (err) => {
+                    console.log("Error: " + err.message);
+        
+                });
+        
+                }).on("error", (err) => {
+                    console.log("Error: " + err.message);
+                });
 
-    res.send("this is a fun app for rachel");
     
     });
 
