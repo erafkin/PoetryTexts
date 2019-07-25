@@ -1,10 +1,10 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import morgan from 'morgan';
+import http from 'http';
 
 
-
-import router from './router';
 
 require('dotenv').config(); // load environment variables
 const app = express();
@@ -24,53 +24,86 @@ app.use(bodyParser.json());
 // Download the helper library from https://www.twilio.com/docs/node/install
 // Your Account Sid and Auth Token from twilio.com/console
 // DANGER! This is insecure. See http://twil.io/secure
-const accountSid = 'AC6552ad565247c77cb8fc1ce3d7d666a1';
-const authToken = '6ed462975d302c6fa64a261a84ebc049';
-const client = require('twilio')(accountSid, authToken);
 
 setInterval(function() {
 
-    const authors  = http.get('http://poetrydb.org/author');
-    const author = authors["authors"][Math.floor(Math.random() * Math.floor(authors["author"].length))];
-    const titles= http.get('http://poetrydb.org/author/' + author + '/title');
-    const title = [Math.floor(Math.random() * Math.floor(titles.length))]["title"];
-    const poem = http.get('http://poetrydb.org/title/' + title)["lines"];
-
-    client.messages
-    .create({
-        body: poem,
-        from: '+18729850386',
-        to: '+19178822564‬'
-     })
-  .then(message => console.log(message.sid));
+    const accountSid = 'AC6552ad565247c77cb8fc1ce3d7d666a1';
+    const authToken = '6ed462975d302c6fa64a261a84ebc049';
+    const client = require('twilio')(accountSid, authToken);
+    
+        let poem_short_enough = false;
+        let poem = [];
+            http.get('http://poetrydb.org/author', (resp) => {
+                let data = '';
+        
+                // A chunk of data has been recieved.
+                resp.on('data', (chunk) => {
+                    data += chunk;
+                });
+        
+                // The whole response has been received. Print out the result.
+                resp.on('end', () => {
+                    let authors = JSON.parse(data)["authors"];
+                    const author = authors[Math.floor(Math.random() * Math.floor(authors.length))];
+                    console.log("author: "+ author);
+                    http.get('http://poetrydb.org/author/' + author + '/title', (resp) => {
+                        let data2 = '';
+        
+                        // A chunk of data has been recieved.
+                        resp.on('data', (chunk) => {
+                            data2 += chunk;
+                        });
+                        console.log(data2);
+                        resp.on('end', () => {
+                            let titles = JSON.parse(data2);
+                            const title = titles[Math.floor(Math.random() * Math.floor(titles.length))]["title"];
+                            console.log("title: "+title);
+                            console.log('http://poetrydb.org/title/' + title);
+                            http.get('http://poetrydb.org/title/' + title, (resp) => {
+        
+                                let data3 = '';
+        
+                                // A chunk of data has been recieved.
+                                resp.on('data', (chunk) => {
+                                    data3 += chunk;
+                                });
+                                console.log(data3);
+                                resp.on('end', () => {
+                                    poem = JSON.parse(data3)[0]["lines"];
+       
+                                    client.messages
+                                        .create({
+                                            body: "Author: "+ author+ "\n"+"Title: " + title + "\n" + JSON.stringify(poem),
+                                            from: '+18729850386',
+                                            to: '+19178822564‬'
+                                        }).then(message => console.log(message.sid)); 
+        
+                                });
+    
+                            });
+                        });
+                    }).on("error", (err) => {
+                        console.log("Error: " + err.message);
+                    });
+                }).on("error", (err) => {
+                    console.log("Error: " + err.message);
+        
+                });
+        
+                }).on("error", (err) => {
+                    console.log("Error: " + err.message);
+                });
   }, 86400000); // every 5 minutes (300000)
 
 app.get('/',(req, res) => {
-    const authors  = http.get('http://poetrydb.org/author');
-    console.log(authors);
-    const author = authors["authors"][Math.floor(Math.random() * Math.floor(authors["author"].length))];
-    console.log(author);
 
-    const titles= http.get('http://poetrydb.org/author/' + author + '/title');
-    console.log(titles);
-
-    const title = [Math.floor(Math.random() * Math.floor(titles.length))]["title"];
-    console.log(title);
-
-    const poem = http.get('http://poetrydb.org/title/' + title)["lines"];
-    console.log(poem);
-
-
-    client.messages
-    .create({
-        body: poem,
-        from: '+18729850386',
-        to: '+3126369908'
-     })  });
+    res.send("this is a fun app for rachel");
+    
+    });
 
 // START THE SERVER
 // =============================================================================
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 9000;
 app.listen(port);
 
 console.log(`listening on: ${port}`);
