@@ -26,7 +26,7 @@ app.use(bodyParser.json());
 // DANGER! This is insecure. See http://twil.io/secure
 var schedule = require('node-schedule');
 var rule = new schedule.RecurrenceRule();
-rule.minute = 21;
+rule.minute = 30;
 rule.hour = 18;
 
 var j = schedule.scheduleJob(rule, function(){
@@ -36,77 +36,80 @@ var j = schedule.scheduleJob(rule, function(){
 
 app.get('/send',(req, res) => {
     
-        let poem = [];
-            http.get('http://poetrydb.org/author', (resp) => {
-                let data = '';
-        
-                // A chunk of data has been recieved.
-                resp.on('data', (chunk) => {
-                    data += chunk;
-                });
-        
-                // The whole response has been received. Print out the result.
-                resp.on('end', () => {
-                    let authors = JSON.parse(data)["authors"];
-                    const author = authors[Math.floor(Math.random() * Math.floor(authors.length))];
-                    console.log("author: "+ author);
-                    http.get('http://poetrydb.org/author/' + author + '/title', (resp) => {
-                        let data2 = '';
-        
-                        // A chunk of data has been recieved.
-                        resp.on('data', (chunk) => {
-                            data2 += chunk;
-                        });
-                        console.log(data2);
-                        resp.on('end', () => {
-                            let titles = JSON.parse(data2);
-                            const title = titles[Math.floor(Math.random() * Math.floor(titles.length))]["title"];
-                            console.log("title: "+title);
-                            console.log('http://poetrydb.org/title/' + title);
-                            http.get('http://poetrydb.org/title/' + title, (resp) => {
-        
-                                let data3 = '';
-        
-                                // A chunk of data has been recieved.
-                                resp.on('data', (chunk) => {
-                                    data3 += chunk;
-                                });
-                                console.log(data3);
-                                resp.on('end', () => {
-                                    poem = JSON.parse(data3)[0]["lines"];
-                                                
-                                    const accountSid = process.env.SID;
-                                    const authToken = process.env.AUTH;
-                                    const client = require('twilio')(accountSid, authToken);
-                                    client.messages
-                                        .create({
-                                            body: "Author: "+ author+ "\n"+"Title: " + title + "\n" + JSON.stringify(poem),
-                                            from: '+18729850386',
-                                            to: '+19178822564‬'
-                                        }).then(message => console.log(message.sid)); 
-                                    res.send("done");
-        
-                                });
+    console.log(process.env.SID);
+
+    let poem = [];
+        http.get('http://poetrydb.org/author', (resp) => {
+            let data = '';
+    
+            // A chunk of data has been recieved.
+            resp.on('data', (chunk) => {
+                data += chunk;
+            });
+    
+            // The whole response has been received. Print out the result.
+            resp.on('end', () => {
+                let authors = JSON.parse(data)["authors"];
+                const author = authors[Math.floor(Math.random() * Math.floor(authors.length))];
+                console.log("author: "+ author);
+                http.get('http://poetrydb.org/author/' + author + '/title', (resp) => {
+                    let data2 = '';
+    
+                    // A chunk of data has been recieved.
+                    resp.on('data', (chunk) => {
+                        data2 += chunk;
+                    });
+                    console.log(data2);
+                    resp.on('end', () => {
+                        let titles = JSON.parse(data2);
+                        const title = titles[Math.floor(Math.random() * Math.floor(titles.length))]["title"];
+                        console.log("title: "+title);
+                        console.log('http://poetrydb.org/title/' + title);
+                        http.get('http://poetrydb.org/title/' + title, (resp) => {
+    
+                            let data3 = '';
+    
+                            // A chunk of data has been recieved.
+                            resp.on('data', (chunk) => {
+                                data3 += chunk;
+                            });
+                            console.log(data3);
+                            resp.on('end', () => {
+                                poem = JSON.parse(data3)[0]["lines"];
+                                            
+                                const accountSid = process.env.SID;
+                                const authToken = process.env.AUTH;
+                                const client = require('twilio')(accountSid, authToken);
+                                client.messages
+                                    .create({
+                                        body: "Author: "+ author+ "\n"+"Title: " + title + "\n" + JSON.stringify(poem),
+                                        from: '+18729850386',
+                                        to: '+19178822564‬'
+                                        // to: '+13126369908'
+                                    }).then(message => console.log(message.sid)); 
+                                res.send(poem);
     
                             });
+
                         });
-                    }).on("error", (err) => {
-                        console.log("Error: " + err.message);
                     });
                 }).on("error", (err) => {
                     console.log("Error: " + err.message);
-        
                 });
-        
-                }).on("error", (err) => {
-                    console.log("Error: " + err.message);
-                });
+            }).on("error", (err) => {
+                console.log("Error: " + err.message);
+    
+            });
+    
+            }).on("error", (err) => {
+                console.log("Error: " + err.message);
+            });
 
     
     });
     app.get('/', (req, res)=>{
         res.send("this is a quick app that sends poems via text message");
-        console.log(process.env.SID);
+
     })
     
     setInterval(function() {
