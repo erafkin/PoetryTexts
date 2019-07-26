@@ -26,7 +26,7 @@ app.use(bodyParser.json());
 // DANGER! This is insecure. See http://twil.io/secure
 var schedule = require('node-schedule');
 var rule = new schedule.RecurrenceRule();
-rule.minute = 0;
+rule.minute = 5;
 rule.hour = 18;
 
 var j = schedule.scheduleJob(rule, function(){
@@ -35,10 +35,6 @@ var j = schedule.scheduleJob(rule, function(){
   });
 
 app.get('/send',(req, res) => {
-            
-    const accountSid = process.env.SID;
-    const authToken = process.env.AUTH;
-    const client = require('twilio')(accountSid, authToken);
     
         let poem = [];
             http.get('http://poetrydb.org/author', (resp) => {
@@ -78,7 +74,10 @@ app.get('/send',(req, res) => {
                                 console.log(data3);
                                 resp.on('end', () => {
                                     poem = JSON.parse(data3)[0]["lines"];
-       
+                                                
+                                    const accountSid = process.env.SID;
+                                    const authToken = process.env.AUTH;
+                                    const client = require('twilio')(accountSid, authToken);
                                     client.messages
                                         .create({
                                             body: "Author: "+ author+ "\n"+"Title: " + title + "\n" + JSON.stringify(poem),
@@ -107,6 +106,7 @@ app.get('/send',(req, res) => {
     });
     app.get('/', (req, res)=>{
         res.send("this is a quick app that sends poems via text message");
+        console.log(process.env.SID);
     })
     
     setInterval(function() {
