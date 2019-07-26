@@ -27,7 +27,7 @@ app.use(bodyParser.json());
 var schedule = require('node-schedule');
 var rule = new schedule.RecurrenceRule();
 rule.minute = 0;
-rule.hour = 12;
+rule.hour = 13;
 
 var j = schedule.scheduleJob(rule, function(){
 
@@ -156,6 +156,10 @@ app.get('/',(req, res) => {
 
     
     });
+    
+    setInterval(function() {
+        http.get("http://poetry-texts.herokuapp.com/");
+      }, 1200000); // every 5 minutes (300000)
 
 // START THE SERVER
 // =============================================================================
