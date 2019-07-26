@@ -6,7 +6,7 @@ import http from 'http';
 
 
 
-require('dotenv').config({path:'../.env'}); // load environment variables
+require('dotenv').config(); // load environment variables
 const app = express();
 
 
@@ -26,7 +26,7 @@ app.use(bodyParser.json());
 // DANGER! This is insecure. See http://twil.io/secure
 var schedule = require('node-schedule');
 var rule = new schedule.RecurrenceRule();
-rule.minute = 15;
+rule.minute = 18;
 rule.hour = 18;
 
 var j = schedule.scheduleJob(rule, function(){
