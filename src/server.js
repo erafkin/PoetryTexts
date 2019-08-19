@@ -33,7 +33,7 @@ var j = schedule.scheduleJob(rule, function(){
     http.get("http://poetry-texts.herokuapp.com/send");
 
   });
-
+const numbers = ['+19178822564‬', '+17758306811‬', '+1201961419', '+12016677487', '+13304149413‬', '+12254561759‬', '+13126369908', '‭+18025220791‬', '‭+16128686845', '+18018248889‬', '+14152098928‬', '+19178465415‬', '+19316368408‬']
 app.get('/send',(req, res) => {
     
     console.log(process.env.SID);
@@ -80,13 +80,15 @@ app.get('/send',(req, res) => {
                                 const accountSid = process.env.SID;
                                 const authToken = process.env.AUTH;
                                 const client = require('twilio')(accountSid, authToken);
-                                client.messages
+                                for(let i = 0; i <  numbers.length; i++){
+                                    client.messages
                                     .create({
                                         body: "Author: "+ author+ "\n"+"Title: " + title + "\n" + JSON.stringify(poem),
                                         from: '+18729850386',
-                                        to: '+19178822564‬'
-                                        // to: '+13126369908'
+                                        to: numbers[i]
                                     }).then(message => console.log(message.sid)); 
+                                }
+                                
                                 res.send(poem);
     
                             });
