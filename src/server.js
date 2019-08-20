@@ -27,7 +27,7 @@ app.use(bodyParser.json());
 var schedule = require('node-schedule');
 var rule = new schedule.RecurrenceRule();
 rule.minute = 30;
-rule.hour = 19;
+rule.hour = 14;
 
 var j = schedule.scheduleJob(rule, function(){
     http.get("http://poetry-texts.herokuapp.com/send");
