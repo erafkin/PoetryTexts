@@ -114,7 +114,7 @@ app.get('/send',(req, res) => {
 
     });
 setInterval(function() {
-        http.get("/");
+        http.get("https://poetry-texts.herokuapp.com/");
       }, 1200000); // every 5 minutes (300000)
 // START THE SERVER
 // =============================================================================
