@@ -26,8 +26,8 @@ app.use(bodyParser.json());
 // DANGER! This is insecure. See http://twil.io/secure
 var schedule = require('node-schedule');
 var rule = new schedule.RecurrenceRule();
-rule.minute = 25;
-rule.hour = 17;
+rule.minute = 10;
+rule.hour = 19;
 
 var j = schedule.scheduleJob(rule, function(){
     http.get("http://poetry-texts.herokuapp.com/send");
