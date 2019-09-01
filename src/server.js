@@ -113,9 +113,7 @@ app.get('/send',(req, res) => {
         res.send("this is a quick app that sends poems via text message");
 
     });
-setInterval(function() {
-        http.get("http://poetry-texts.herokuapp.com/");
-      }, 1200000); // every 5 minutes (300000)
+
 // START THE SERVER
 // =============================================================================
 const port = process.env.PORT || 9000;
