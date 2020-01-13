@@ -42,7 +42,7 @@ app.get('/we_back', (req, res)=>{
         client.messages
         .create({
             body: "hey remember me?? Daily poem texts will be back up and running get psyched! I hope your 20W is going swimmingly. Text me if you dont want them anymore! xoxo, emma",
-            from: '+18729850386',
+            from: '+17868286899',
             to: numbers[i]
         }).then(message => console.log(message.sid)); 
     }
@@ -99,7 +99,7 @@ app.get('/send',(req, res) => {
                                     client.messages
                                     .create({
                                         body: "Author: "+ author+ "\n"+"Title: " + title + "\n" + JSON.stringify(poem),
-                                        from: '+18729850386',
+                                        from: '+17868286899',
                                         to: numbers[i]
                                     }).then(message => console.log(message.sid)); 
                                 }
