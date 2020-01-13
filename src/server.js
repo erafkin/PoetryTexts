@@ -26,14 +26,29 @@ app.use(bodyParser.json());
 // DANGER! This is insecure. See http://twil.io/secure
 var schedule = require('node-schedule');
 var rule = new schedule.RecurrenceRule();
-rule.minute = 10;
-rule.hour = 19;
+rule.minute = 14;
+rule.hour = 00;
 
 var j = schedule.scheduleJob(rule, function(){
     http.get("http://poetry-texts.herokuapp.com/send");
 
   });
 const numbers = ['+19178822564‬',  '+13126369908', '‭+18025220791‬', '+13106131605‬'];
+app.get('/we_back', (req, res)=>{
+    const accountSid = process.env.SID;
+    const authToken = process.env.AUTH;
+    const client = require('twilio')(accountSid, authToken);
+    for(let i = 0; i <  numbers.length; i++){
+        client.messages
+        .create({
+            body: "hey remember me?? Daily poem texts will be back up and running get psyched! I hope your 20W is going swimmingly. Text me if you dont want them anymore! xoxo, emma",
+            from: '+18729850386',
+            to: numbers[i]
+        }).then(message => console.log(message.sid)); 
+    }
+    
+    res.send(poem);
+});
 app.get('/send',(req, res) => {
     
     console.log(process.env.SID);
