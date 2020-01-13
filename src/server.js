@@ -26,7 +26,7 @@ app.use(bodyParser.json());
 // DANGER! This is insecure. See http://twil.io/secure
 var schedule = require('node-schedule');
 var rule = new schedule.RecurrenceRule();
-rule.minute = 00;
+rule.minute = 0;
 rule.hour = 14;
 
 var j = schedule.scheduleJob(rule, function(){
