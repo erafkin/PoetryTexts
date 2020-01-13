@@ -47,7 +47,7 @@ app.get('/we_back', (req, res)=>{
         }).then(message => console.log(message.sid)); 
     }
     
-    res.send(poem);
+    res.send("message sent!");
 });
 app.get('/send',(req, res) => {
     
