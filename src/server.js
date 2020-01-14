@@ -26,17 +26,13 @@ app.use(bodyParser.json());
 // DANGER! This is insecure. See http://twil.io/secure
 var schedule = require('node-schedule');
 var rule = new schedule.RecurrenceRule();
-rule.minute = 32;
-rule.hour = 16;
+rule.minute = 05;
+rule.hour = 17;
 
 var j = schedule.scheduleJob(rule, function(){
     http.get("http://poetry-texts.herokuapp.com/send");
 
   });
-const sendPoem=()=>{
-    http.get("http://poetry-texts.herokuapp.com/send");
-
-}
 const numbers = ['+19178822564‬',  '+13126369908', '‭+18025220791‬', '+13106131605‬'];
 app.get('/send',(req, res) => {
     
