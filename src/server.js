@@ -26,8 +26,8 @@ app.use(bodyParser.json());
 // DANGER! This is insecure. See http://twil.io/secure
 var schedule = require('node-schedule');
 var rule = new schedule.RecurrenceRule();
-rule.minute = 5;
-rule.hour = 17;
+rule.minute = 0;
+rule.hour = 16;
 
 var j = schedule.scheduleJob(rule, function(){
     http.get("http://poetry-texts.herokuapp.com/send");
@@ -35,78 +35,55 @@ var j = schedule.scheduleJob(rule, function(){
   });
 const numbers = ['+19178822564‬',  '+13126369908', '‭+18025220791‬', '+13106131605‬'];
 app.get('/send',(req, res) => {
-    
-    console.log(process.env.SID);
-
     let poem = [];
-        http.get('http://poetrydb.org/author', (resp) => {
-            let data = '';
-    
-            // A chunk of data has been recieved.
-            resp.on('data', (chunk) => {
-                data += chunk;
-            });
-    
-            // The whole response has been received. Print out the result.
-            resp.on('end', () => {
-                let authors = JSON.parse(data)["authors"];
-                const author = authors[Math.floor(Math.random() * Math.floor(authors.length))];
-                console.log("author: "+ author);
-                http.get('http://poetrydb.org/author/' + author + '/title', (resp) => {
-                    let data2 = '';
-    
-                    // A chunk of data has been recieved.
-                    resp.on('data', (chunk) => {
-                        data2 += chunk;
-                    });
-                    console.log(data2);
-                    resp.on('end', () => {
-                        let titles = JSON.parse(data2);
-                        const title = titles[Math.floor(Math.random() * Math.floor(titles.length))]["title"];
-                        console.log("title: "+title);
-                        console.log('http://poetrydb.org/title/' + title);
-                        http.get('http://poetrydb.org/title/' + title, (resp) => {
-    
-                            let data3 = '';
-    
-                            // A chunk of data has been recieved.
-                            resp.on('data', (chunk) => {
-                                data3 += chunk;
-                            });
-                            console.log(data3);
-                            resp.on('end', () => {
-                                poem = JSON.parse(data3)[0]["lines"];
-                                            
-                                const accountSid = process.env.SID;
-                                const authToken = process.env.AUTH;
-                                const client = require('twilio')(accountSid, authToken);
-                                for(let i = 0; i <  numbers.length; i++){
-                                    client.messages
-                                    .create({
-                                        body: "Author: "+ author+ "\n"+"Title: " + title + "\n" + JSON.stringify(poem),
-                                        from: '+17868286899',
-                                        to: numbers[i]
-                                    }).then(message => console.log(message.sid)); 
-                                }
-                                
-                                res.send(poem);
-    
-                            });
+    let authors = ['Anne Bronte', 'Charlotte Bronte', 'Edgar Allan Poe', 'Emily Bronte', 'Emily Dickinson', 'Henry David Thoreau', 'Jane Austen', 'Jonathan Swift', 'Lewis Carroll', 'Mark Twain', 'Oscar Wilde', 'Ralph Waldo Emerson', 'Walt Whitman', 'William Wordsworth'];
+    const author = authors[Math.floor(Math.random() * Math.floor(authors.length))];
+    console.log("author: "+ author);
+    http.get('http://poetrydb.org/author/' + author + '/title', (resp) => {
+        let data2 = '';
+        // A chunk of data has been recieved.
+        resp.on('data', (chunk) => {
+            data2 += chunk;
+        });
+        console.log(data2);
+        resp.on('end', () => {
+            let titles = JSON.parse(data2);
+            const title = titles[Math.floor(Math.random() * Math.floor(titles.length))]["title"];
+            console.log("title: "+title);
+            console.log('http://poetrydb.org/title/' + title);
+            http.get('http://poetrydb.org/title/' + title, (resp) => {
 
-                        });
-                    });
-                }).on("error", (err) => {
-                    console.log("Error: " + err.message);
+                let data3 = '';
+
+                // A chunk of data has been recieved.
+                resp.on('data', (chunk) => {
+                    data3 += chunk;
                 });
-            }).on("error", (err) => {
-                console.log("Error: " + err.message);
-    
-            });
-    
-            }).on("error", (err) => {
-                console.log("Error: " + err.message);
-            });
+                console.log(data3);
+                resp.on('end', () => {
+                    poem = JSON.parse(data3)[0]["lines"];
+                                
+                    const accountSid = process.env.SID;
+                    const authToken = process.env.AUTH;
+                    const client = require('twilio')(accountSid, authToken);
+                    for(let i = 0; i <  numbers.length; i++){
+                        client.messages
+                        .create({
+                            body: "Author: "+ author+ "\n"+"Title: " + title + "\n" + JSON.stringify(poem),
+                            from: '+17868286899',
+                            to: numbers[i]
+                        }).then(message => console.log(message.sid)); 
+                    }
+                    
+                    res.send(poem);
 
+                });
+
+            });
+        });
+    }).on("error", (err) => {
+        console.log("Error: " + err.message);
+    });
     
     });
     app.get('/', (req, res)=>{
