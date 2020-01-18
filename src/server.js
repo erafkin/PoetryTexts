@@ -31,7 +31,6 @@ rule.hour = 16;
 
 var j = schedule.scheduleJob(rule, function(){
     http.get("http://poetry-texts.herokuapp.com/send");
-
   });
 const numbers = ['+19178822564‬',  '+13126369908', '‭+18025220791‬', '+13106131605‬'];
 app.get('/send',(req, res) => {
@@ -49,6 +48,7 @@ app.get('/send',(req, res) => {
         resp.on('end', () => {
             let titles = JSON.parse(data2);
             const title = titles[Math.floor(Math.random() * Math.floor(titles.length))]["title"];
+            if(title.includes("(")) title = title.substring(0, title.indexOf("("))
             console.log("title: "+title);
             console.log('http://poetrydb.org/title/' + title);
             http.get('http://poetrydb.org/title/' + title, (resp) => {
@@ -62,20 +62,25 @@ app.get('/send',(req, res) => {
                 console.log(data3);
                 resp.on('end', () => {
                     poem = JSON.parse(data3)[0]["lines"];
-                                
-                    const accountSid = process.env.SID;
-                    const authToken = process.env.AUTH;
-                    const client = require('twilio')(accountSid, authToken);
-                    for(let i = 0; i <  numbers.length; i++){
-                        client.messages
-                        .create({
-                            body: "Author: "+ author+ "\n"+"Title: " + title + "\n" + JSON.stringify(poem),
-                            from: '+17868286899',
-                            to: numbers[i]
-                        }).then(message => console.log(message.sid)); 
+                    if(poem.length > 160){
+                        http.get("http://poetry-texts.herokuapp.com/send");
                     }
+                    else{
+                        const accountSid = process.env.SID;
+                        const authToken = process.env.AUTH;
+                        const client = require('twilio')(accountSid, authToken);
+                        for(let i = 0; i <  numbers.length; i++){
+                            client.messages
+                            .create({
+                                body: "Author: "+ author+ "\n"+"Title: " + title + "\n" + JSON.stringify(poem),
+                                from: '+17868286899',
+                                to: numbers[i]
+                            }).then(message => console.log(message.sid)); 
+                        }
+                        
+                        res.send(poem);
+                    }            
                     
-                    res.send(poem);
 
                 });
 
@@ -86,6 +91,8 @@ app.get('/send',(req, res) => {
     });
     
     });
+
+
     app.get('/', (req, res)=>{
         res.send("this is a quick app that sends poems via text message");
 
