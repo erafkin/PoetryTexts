@@ -62,10 +62,6 @@ app.get('/send',(req, res) => {
                 console.log(data3);
                 resp.on('end', () => {
                     poem = JSON.parse(data3)[0]["lines"];
-                    if(poem.length > 160){
-                        http.get("http://poetry-texts.herokuapp.com/send");
-                    }
-                    else{
                         const accountSid = process.env.SID;
                         const authToken = process.env.AUTH;
                         const client = require('twilio')(accountSid, authToken);
@@ -76,12 +72,8 @@ app.get('/send',(req, res) => {
                                 from: '+17868286899',
                                 to: numbers[i]
                             }).then(message => console.log(message.sid)); 
-                        }
-                        
-                        res.send(poem);
-                    }            
-                    
-
+                        }                 
+                        res.send(poem);                  
                 });
 
             });
