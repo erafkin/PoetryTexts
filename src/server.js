@@ -29,9 +29,9 @@ var rule = new schedule.RecurrenceRule();
 rule.minute = 0;
 rule.hour = 16;
 
-var j = schedule.scheduleJob(rule, function(){
-    http.get("http://poetry-texts.herokuapp.com/send");
-  });
+// var j = schedule.scheduleJob(rule, function(){
+//     http.get("http://poetry-texts.herokuapp.com/send");
+//   });
 const numbers = ['+19178822564‬',  '+13126369908', '‭+18025220791‬', '+13106131605‬'];
 app.get('/send',(req, res) => {
     let poem = [];
